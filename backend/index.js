@@ -30,10 +30,14 @@ app.post('/upload-ion', upload.single('file'), (req, res) => {
         // Get metadata and botInfo
         const metadata = struct.metadata || null;
         const botInfo = metadata?.botInfo || null;
+        const sessionInfo = metadata?.sessionInfo || null;
+        const botConfig = metadata?.botConfig || null;
 
         const data = {
             data : {
                 botInfo: botInfo,
+                sessionInfo: sessionInfo,
+                botConfig: botConfig,
             },
             success: true,
         }

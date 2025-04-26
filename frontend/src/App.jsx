@@ -8,6 +8,8 @@ function App() {
   const [jsonData, setJsonData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showBotInfo, setShowBotInfo] = useState(false);
+  const [showSessionInfo, setShowSessionInfo] = useState(false);
+  const [showBotConfig, setShowBotConfig] = useState(false);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -44,6 +46,7 @@ function App() {
   return (
     <div>
       <div className="upload-container">
+
         <form className="upload-form" onSubmit={handleUpload}>
           <IonFileDropzone onFileSelected={setFile} file={file} />
           <button
@@ -56,24 +59,64 @@ function App() {
         </form>
       </div>
       <div className="data-container">
-        {jsonData && jsonData.botInfo && (
-          <div>
-            {/* Dropdown/Accordion Button */}
-            <button
-              className="dropdown-btn"
-              onClick={() => setShowBotInfo((prev) => !prev)}
-            >
-              Bot Info
-              <span>
-                {showBotInfo ? "▼" : "▶"} {/* Icon đổi chiều */}
-              </span>              
-            </button>
-            {showBotInfo && (
-              <KeyValueTable data={jsonData.botInfo} />
-            )}
-          </div>
-        )}
+        <div className="accordion-block">
+          {/* Dropdown/Accordion Button */}
+          <button
+            className="dropdown-btn"
+            onClick={() => setShowBotInfo((prev) => !prev)}
+          >
+            Bot Info
+            <span>
+              {showBotInfo ? "▼" : "▶"} {/* Icon change direction */}
+            </span>
+          </button>
+          {jsonData && jsonData.botInfo && (
+            <div>
+              {showBotInfo && (
+                <KeyValueTable data={jsonData.botInfo} />
+              )}
+            </div>
+          )}
+
+          {/* Dropdown/Accordion Button */}
+          <button
+            className="dropdown-btn"
+            onClick={() => setShowSessionInfo((prev) => !prev)}
+          >
+            Session Info
+            <span>
+              {showSessionInfo ? "▼" : "▶"} {/* Icon change direction */}
+            </span>
+          </button>
+          {jsonData && jsonData.sessionInfo && (
+            <div>
+              {showSessionInfo && (
+                <KeyValueTable data={jsonData.sessionInfo} />
+              )}
+            </div>
+          )}
+
+          {/* Dropdown/Accordion Button */}
+          <button
+            className="dropdown-btn"
+            onClick={() => setShowBotConfig((prev) => !prev)}
+          >
+            Bot Config
+            <span>
+              {showBotConfig ? "▼" : "▶"} {/* Icon change direction */}
+            </span>
+          </button>
+          {jsonData && jsonData.botConfig && (
+            <div>
+              {showBotConfig && (
+                <KeyValueTable data={jsonData.botConfig} />
+              )}
+            </div>
+          )}
+        </div>
       </div>
+
+
     </div>
   );
 }

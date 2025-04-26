@@ -74,6 +74,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .upload-btn:disabled {
   background: #b6c6e2;
   cursor: not-allowed;
@@ -81,8 +82,12 @@
 
 /* Metadata + Bot Info */
 .data-container {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 31vw;         /* 1/3 of screen width */
+  min-width: 320px;    /* Minimum width to prevent it from being too small */
+  margin-left: 1vw;    /* Align to left margin */
+  margin-right: auto;  /* Ensure it doesn't center */
+  margin-top: 40px;    /* Add some top margin for better appearance */
+  /* Removed margin: 0 auto; */
 }
 
 .data-block {
@@ -94,16 +99,59 @@
   margin-bottom: 18px;
 }
 
-/* Dropdown button styles */
+.accordion-block {
+  width: 100%;
+  max-width: unset;
+  margin: 0 auto 32px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #e7ecf3;
+  border: 1.5px solid #b3c6e0;
+  overflow: hidden;
+  padding-bottom: 0px;
+}
+
 .dropdown-btn {
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
   color: #1a4d7c;
-  font-size: 1.3em;
+  font-size: 1.15em;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 8px;
+  padding: 12px 24px;
+  transition: background 0.15s;
+  border-bottom: 1px solid #e2eaf3;
+  text-align: left;
+  justify-content: space-between; /* Push label to left, icon to right */
+}
+
+.dropdown-icon {
+  margin-left: 0;
+  margin-right: 0;
+  font-size: 1.1em;
+  transition: transform 0.2s;
+}
+
+.dropdown-btn:last-of-type {
+  border-bottom: none;
+}
+
+.dropdown-btn:not(:first-child) {
+  margin-top: 10px;
+}
+
+.dropdown-btn:hover {
+  background: #f4f7fb;
+}
+.data-block, .key-value-table {
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  border-radius: 0 0 8px 8px;
+  margin: 0;
+  padding: 0;
 }

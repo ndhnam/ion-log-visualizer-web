@@ -1,0 +1,109 @@
+/* Dropzone Container */
+.upload-container {
+  width: 100vw;
+  height: 20vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding-top: 32px;
+  background: #f6f7fa;
+}
+
+/* Dropzone Form */
+.upload-form {
+  width: 33vw;
+  min-width: 320px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Dropzone styles */
+.dropzone {
+  border: 2px dashed #d0d0d0;
+  border-radius: 10px;
+  min-height: 120px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.dropzone.active {
+  background: #e6f7ff;
+}
+
+.dropzone-content {
+  text-align: center;
+  width: 100%;
+}
+
+.dropzone-icon {
+  font-size: 40px;
+  color: #1890ff;
+}
+
+.dropzone-text {
+  color: #888;
+  margin-top: 4px;
+}
+
+.dropzone-file-name {
+  color: #444;
+  margin-top: 10px;
+}
+
+/* Upload Button */
+.upload-btn {
+  margin-top: 14px;
+  margin-bottom: 14px;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  background: #1890ff;
+  color: #fff;
+  border: none;
+  box-shadow: 0 1px 8px #d0d8f5a1;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.upload-btn:disabled {
+  background: #b6c6e2;
+  cursor: not-allowed;
+}
+
+/* Metadata + Bot Info */
+.data-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.data-block {
+  background: #f7f7f7;
+  padding: 16px;
+  border-radius: 6px;
+  max-height: 400px;
+  overflow: auto;
+  margin-bottom: 18px;
+}
+
+/* Dropdown button styles */
+.dropdown-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #1a4d7c;
+  font-size: 1.3em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 8px;
+}

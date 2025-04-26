@@ -24,9 +24,6 @@ app.post('/upload-ion', upload.single('file'), (req, res) => {
         // Delete temporary file
         fs.unlinkSync(filePath);
 
-        // Log session info
-        console.log('Session info:', struct.metadata.compressionMethod);
-
         // Get metadata and botInfo
         const metadata = struct.metadata || null;
         const botInfo = metadata?.botInfo || null;

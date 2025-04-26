@@ -46,7 +46,6 @@ function App() {
   return (
     <div>
       <div className="upload-container">
-
         <form className="upload-form" onSubmit={handleUpload}>
           <IonFileDropzone onFileSelected={setFile} file={file} />
           <button
@@ -63,36 +62,34 @@ function App() {
           {/* Dropdown/Accordion Button */}
           <button
             className="dropdown-btn"
-            onClick={() => setShowBotInfo((prev) => !prev)}
-          >
-            Bot Info
-            <span>
-              {showBotInfo ? "▼" : "▶"} {/* Icon change direction */}
-            </span>
-          </button>
-          {jsonData && jsonData.botInfo && (
-            <div>
-              {showBotInfo && (
-                <KeyValueTable data={jsonData.botInfo} />
-              )}
-            </div>
-          )}
-
-          {/* Dropdown/Accordion Button */}
-          <button
-            className="dropdown-btn"
             onClick={() => setShowSessionInfo((prev) => !prev)}
           >
-            Session Info
+            Session Information
             <span>
               {showSessionInfo ? "▼" : "▶"} {/* Icon change direction */}
             </span>
           </button>
           {jsonData && jsonData.sessionInfo && (
             <div>
-              {showSessionInfo && (
-                <KeyValueTable data={jsonData.sessionInfo} />
-              )}
+              {showSessionInfo && <KeyValueTable data={jsonData.sessionInfo} />}
+            </div>
+          )}
+
+          {/* Dropdown/Accordion Button */}
+          <button
+            className="dropdown-btn"
+            onClick={() => setShowBotInfo((prev) => !prev)}
+          >
+            {jsonData && jsonData.botInfo && jsonData.botInfo.botName
+              ? jsonData.botInfo.botName
+              : "Bot Info"}
+            <span>
+              {showBotInfo ? "▼" : "▶"} {/* Icon change direction */}
+            </span>
+          </button>
+          {jsonData && jsonData.botInfo && (
+            <div>
+              {showBotInfo && <KeyValueTable data={jsonData.botInfo} />}
             </div>
           )}
 
@@ -101,22 +98,18 @@ function App() {
             className="dropdown-btn"
             onClick={() => setShowBotConfig((prev) => !prev)}
           >
-            Bot Config
+            Bot Configuration
             <span>
               {showBotConfig ? "▼" : "▶"} {/* Icon change direction */}
             </span>
           </button>
           {jsonData && jsonData.botConfig && (
             <div>
-              {showBotConfig && (
-                <KeyValueTable data={jsonData.botConfig} />
-              )}
+              {showBotConfig && <KeyValueTable data={jsonData.botConfig} />}
             </div>
           )}
         </div>
       </div>
-
-
     </div>
   );
 }

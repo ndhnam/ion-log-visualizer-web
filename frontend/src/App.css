@@ -1,7 +1,7 @@
 /* Dropzone Container */
 .upload-container {
   width: 100vw;
-  height: 10vh;
+  height: 8vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -51,11 +51,6 @@
 .dropzone-content {
   text-align: center;
   width: 100%;
-}
-
-.dropzone-text {
-  color: #888;
-  margin-top: 1px;
 }
 
 .dropzone-file-name {
@@ -231,7 +226,7 @@
 
 .message-data {
   width: 100%;
-  max-height: 15vw;
+  max-height: 30vw;
   display: inline-block;
   align-items: center;
   font-size: 15px;
@@ -242,3 +237,4 @@
   overflow-x: auto;
   margin: 0;
 }
+

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import IonFileDropzone from "./components/IonFileDropzone";
 import KeyValueTable from "./components/KeyValueTable";
 import "./App.css";
+import PlaybackControl from "./components/PlaybackControl";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -12,6 +13,13 @@ function App() {
   const [showBotConfig, setShowBotConfig] = useState(false);
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState("");
+
+  // Playback state
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [speed, setSpeed] = useState(1);
+
+  const intervalRef = useRef();
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -67,6 +75,62 @@ function App() {
 
   const firstMsg = currentTopic?.messages?.[0];
 
+  // // playback - duration và current message
+  const messages = currentTopic?.messages || [];
+
+  // Chỉ lấy timestamp của message cuối cùng ở mỗi topic
+  const lastTimestamps = topics
+  .map(t => {
+    const msgs = t.messages || [];
+    return msgs.length > 0 ? msgs[msgs.length - 1].timestamp : undefined;
+  })
+  .filter(ts => typeof ts === "number");
+
+  const firstTimestamps = topics
+  .map(t => {
+    const msgs = t.messages || [];
+    return msgs.length > 0 ? msgs[0].timestamp : undefined;
+  })
+  .filter(ts => typeof ts === "number" && ts > 0);
+
+  // duration là (max last timestamp) - (min first timestamp)
+  const minTimestamp = firstTimestamps.length > 0 ? Math.min(...firstTimestamps) : 0;
+  const maxTimestamp = lastTimestamps.length > 0 ? Math.max(...lastTimestamps) : 0;
+  const duration = maxTimestamp - minTimestamp;
+
+  // playbackTime luôn là minTimestamp + currentTime
+  const playbackTime = minTimestamp + currentTime;
+
+  const currentMsg = messages.find(
+    (m, i) =>
+      m.timestamp >= playbackTime ||
+      i === messages.length - 1
+  );
+
+  // Auto play timer
+  useEffect(() => {
+    if (isPlaying && duration > 0) {
+      intervalRef.current = setInterval(() => {
+        setCurrentTime((prev) => {
+          if (prev + 50 * speed >= duration) {
+            setIsPlaying(false);
+            return duration;
+          }
+          return prev + 50 * speed;
+        });
+      }, 50);
+    } else {
+      clearInterval(intervalRef.current);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [isPlaying, duration, speed]);
+
+  // Reset playback khi đổi topic
+  // useEffect(() => {
+  //   setCurrentTime(0);
+  //   setIsPlaying(false);
+  // }, [selectedTopic]);
+
   return (
     <div>
       <div className="upload-container">
@@ -83,6 +147,17 @@ function App() {
           </div>
         </form>
       </div>
+
+      <PlaybackControl
+        isPlaying={isPlaying}
+        currentTime={currentTime}
+        duration={duration}
+        onPlayPause={() => setIsPlaying((p) => !p)}
+        onSeek={(t) => setCurrentTime(t)}
+        speed={speed}
+        onSpeedChange={setSpeed}
+      />
+
       <div className="main-3col-row">
         <div className="left-panel data-container">
           <div className="accordion-block">
@@ -174,9 +249,9 @@ function App() {
             </div>
             {currentTopic && (
               <div className="message-block">
-                {firstMsg ? (
+                {currentMsg ? (
                   <pre className="message-data">
-                    {JSON.stringify(firstMsg.data || firstMsg, null, 2)}
+                    {JSON.stringify(currentMsg.data || currentMsg, null, 2)}
                   </pre>
                 ) : (
                   <span style={{ color: "#888" }}>

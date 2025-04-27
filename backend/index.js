@@ -24,18 +24,14 @@ app.post('/upload-ion', upload.single('file'), (req, res) => {
         // Delete temporary file
         fs.unlinkSync(filePath);
 
-        // Get metadata and botInfo
+        // Get metadata and topics
         const metadata = struct.metadata || null;
-        const botInfo = metadata?.botInfo || null;
-        const sessionInfo = metadata?.sessionInfo || null;
-        const botConfig = metadata?.botConfig || null;
+
+        const topics = struct.topics || null;
 
         const data = {
-            data : {
-                botInfo: botInfo,
-                sessionInfo: sessionInfo,
-                botConfig: botConfig,
-            },
+            metadata : metadata,
+            topics : topics,
             success: true,
         }
         // Return parsed data

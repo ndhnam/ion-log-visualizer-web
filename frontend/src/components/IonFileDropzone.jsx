@@ -24,7 +24,6 @@ export default function IonFileDropzone({ onFileSelected, file }) {
     >
       <input {...getInputProps()} />
       <div className="dropzone-content">
-        <div className="dropzone-icon">☁️</div>
         <div>
           <strong>Drag & drop an Ion file here</strong>
         </div>

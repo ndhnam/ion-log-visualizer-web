@@ -3,6 +3,7 @@ import IonFileDropzone from "./components/IonFileDropzone";
 import KeyValueTable from "./components/KeyValueTable";
 import "./App.css";
 import PlaybackControl from "./components/PlaybackControl";
+import { formatTime } from "./utils/formatTime";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -20,6 +21,10 @@ function App() {
   const [speed, setSpeed] = useState(1);
 
   const intervalRef = useRef();
+
+  // Console log
+  const [consoleSearch, setConsoleSearch] = useState("");
+  const logConsoleRef = useRef(null);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -80,31 +85,31 @@ function App() {
 
   // Chỉ lấy timestamp của message cuối cùng ở mỗi topic
   const lastTimestamps = topics
-  .map(t => {
-    const msgs = t.messages || [];
-    return msgs.length > 0 ? msgs[msgs.length - 1].timestamp : undefined;
-  })
-  .filter(ts => typeof ts === "number");
+    .map((t) => {
+      const msgs = t.messages || [];
+      return msgs.length > 0 ? msgs[msgs.length - 1].timestamp : undefined;
+    })
+    .filter((ts) => typeof ts === "number");
 
   const firstTimestamps = topics
-  .map(t => {
-    const msgs = t.messages || [];
-    return msgs.length > 0 ? msgs[0].timestamp : undefined;
-  })
-  .filter(ts => typeof ts === "number" && ts > 0);
+    .map((t) => {
+      const msgs = t.messages || [];
+      return msgs.length > 0 ? msgs[0].timestamp : undefined;
+    })
+    .filter((ts) => typeof ts === "number" && ts > 0);
 
   // duration là (max last timestamp) - (min first timestamp)
-  const minTimestamp = firstTimestamps.length > 0 ? Math.min(...firstTimestamps) : 0;
-  const maxTimestamp = lastTimestamps.length > 0 ? Math.max(...lastTimestamps) : 0;
+  const minTimestamp =
+    firstTimestamps.length > 0 ? Math.min(...firstTimestamps) : 0;
+  const maxTimestamp =
+    lastTimestamps.length > 0 ? Math.max(...lastTimestamps) : 0;
   const duration = maxTimestamp - minTimestamp;
 
   // playbackTime luôn là minTimestamp + currentTime
   const playbackTime = minTimestamp + currentTime;
 
   const currentMsg = messages.find(
-    (m, i) =>
-      m.timestamp >= playbackTime ||
-      i === messages.length - 1
+    (m, i) => m.timestamp >= playbackTime || i === messages.length - 1
   );
 
   // Auto play timer
@@ -125,11 +130,30 @@ function App() {
     return () => clearInterval(intervalRef.current);
   }, [isPlaying, duration, speed]);
 
-  // Reset playback khi đổi topic
-  // useEffect(() => {
-  //   setCurrentTime(0);
-  //   setIsPlaying(false);
-  // }, [selectedTopic]);
+  // Console log
+  const rosoutTopic = topics.find(
+    (t) => (t.topicName || t.topic_name) === "/rosout_agg"
+  );
+  const rosoutMessages = rosoutTopic?.messages || [];
+
+  const displayedRosoutMessages = rosoutMessages.filter(
+    (msg) => msg.timestamp <= playbackTime
+  );
+
+  const filteredRosoutMessages = displayedRosoutMessages.filter(
+    (msg) =>
+      !consoleSearch ||
+      (msg.data &&
+        JSON.stringify(msg.data)
+          .toLowerCase()
+          .includes(consoleSearch.toLowerCase()))
+  );
+
+  useEffect(() => {
+    if (logConsoleRef.current) {
+      logConsoleRef.current.scrollTop = logConsoleRef.current.scrollHeight;
+    }
+  }, [filteredRosoutMessages]);
 
   return (
     <div>
@@ -264,7 +288,35 @@ function App() {
         </div>
 
         <div className="right-panel">
-          {/* Có thể để trống, hoặc thêm các panel về sau */}
+          <div className="log-console-block">
+            <div className="log-console-header">
+              <span style={{ fontWeight: 500 }}>Log Console (/rosout_agg)</span>
+              <input
+                type="text"
+                className="log-console-search"
+                value={consoleSearch}
+                onChange={(e) => setConsoleSearch(e.target.value)}
+                placeholder="Search logs..."
+                style={{ marginLeft: "12px" }}
+              />
+            </div>
+            <div className="log-console-content" ref={logConsoleRef}>
+              {filteredRosoutMessages.length > 0 ? (
+                filteredRosoutMessages.map((msg, i) => (
+                  <div key={i} className="log-console-line">
+                    <span className="log-console-timestamp">
+                      {formatTime(msg.timestamp - minTimestamp)}
+                    </span>{" "}
+                    {msg.data && msg.data.msg
+                      ? msg.data.msg
+                      : JSON.stringify(msg.data)}
+                  </div>
+                ))
+              ) : (
+                <div className="log-console-empty">No log message.</div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

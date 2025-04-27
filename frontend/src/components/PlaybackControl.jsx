@@ -1,5 +1,6 @@
 import React from "react";
 import "./PlaybackControl.css";
+import { formatTime } from "../utils/formatTime";
 
 export default function PlaybackControl({
   isPlaying,
@@ -10,18 +11,6 @@ export default function PlaybackControl({
   speed,
   onSpeedChange
 }) {
-  // format seconds to mm:ss.mmm
-  const formatTime = t => {
-    const seconds = Math.floor(t / 1000);
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60)
-    const milliseconds = Math.floor(t % 1000) 
-    return `${minutes}:${secs.toString().padStart(2, "0")}.${milliseconds
-      .toString()
-      .padStart(3, "0")}`;
-  };
-
   return (
     <div className="playback-row">
       <button className="play-btn" onClick={onPlayPause}>

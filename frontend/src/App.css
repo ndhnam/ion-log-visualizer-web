@@ -272,11 +272,12 @@
 }
 
 .log-console-content {
+  box-sizing: border-box;
+  width: 100%;
   flex: 1;
   overflow-y: auto;
   font-family: "JetBrains Mono", "Fira Mono", monospace;
   font-size: 15px;
-  margin-left: 8px;
   margin-top: 6px;
   padding-left: 18px;
   padding-bottom: 10px;

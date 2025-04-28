@@ -3,7 +3,9 @@ import IonFileDropzone from "./components/IonFileDropzone";
 import KeyValueTable from "./components/KeyValueTable";
 import "./App.css";
 import PlaybackControl from "./components/PlaybackControl";
-import { formatTime } from "./utils/formatTime";
+import { formatTime } from "./utils/FormatTime";
+import Viewport3D from "./components/Viewport3D";
+import { getOdomAtTime } from "./utils/HandleOdom";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -14,6 +16,7 @@ function App() {
   const [showBotConfig, setShowBotConfig] = useState(false);
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState("");
+  const [objString, setObjString] = useState(null);
 
   // Playback state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -154,6 +157,33 @@ function App() {
       logConsoleRef.current.scrollTop = logConsoleRef.current.scrollHeight;
     }
   }, [filteredRosoutMessages]);
+
+  useEffect(() => {
+    if (jsonData && jsonData.objString) {
+      console.log("jsonData.objString", jsonData.objString);
+      setObjString(jsonData.objString);
+    }
+  }, [jsonData]);
+
+  const [viewerKey, setViewerKey] = useState(0);
+
+  useEffect(() => {
+    if (objString) setViewerKey((k) => k + 1);
+  }, [objString]);
+
+  const odomTopic = topics.find(
+    (t) => (t.topicName || t.topic_name) === "/tb_control/wheel_odom"
+  );
+  const odomMessages = odomTopic?.messages || [];
+  const currentOdom = getOdomAtTime(odomMessages, playbackTime);
+  let position = [0, 0, 0];
+  let quaternion = [0, 0, 0, 1]; // x, y, z, w
+  if (currentOdom && currentOdom.data?.pose?.pose) {
+    const pos = currentOdom.data.pose.pose.position;
+    const ori = currentOdom.data.pose.pose.orientation;
+    position = [pos.x, pos.z, -pos.y || 0];
+    quaternion = [ori.x, ori.z, ori.y, ori.w];
+  }
 
   return (
     <div>
@@ -316,6 +346,26 @@ function App() {
                 <div className="log-console-empty">No log message.</div>
               )}
             </div>
+          </div>
+          <div style={{ marginTop: 32 }}>
+            {objString ? (
+              <React.Suspense
+                fallback={
+                  <div style={{ color: "#ccc" }}>Loading 3D model...</div>
+                }
+              >
+                <Viewport3D
+                  key={viewerKey}
+                  objString={objString}
+                  position={position}
+                  quaternion={quaternion}
+                />
+              </React.Suspense>
+            ) : (
+              <div style={{ color: "#888", textAlign: "center" }}>
+                No 3D model available
+              </div>
+            )}
           </div>
         </div>
       </div>

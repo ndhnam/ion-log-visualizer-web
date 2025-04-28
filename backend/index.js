@@ -9,6 +9,14 @@ const upload = multer({ dest: 'uploads/' });
 
 app.use(cors());
 
+const zlib = require('zlib');
+
+function extractObjFromBotModel(base64GzStr) {
+  const gzBuffer = Buffer.from(base64GzStr, "base64");
+  const objBuffer = zlib.gunzipSync(gzBuffer); // Buffer OBJ
+  return objBuffer.toString(); // Chuỗi OBJ
+}
+
 // Route upload file ION
 app.post('/upload-ion', upload.single('file'), (req, res) => {
     const filePath = req.file.path;
@@ -29,9 +37,14 @@ app.post('/upload-ion', upload.single('file'), (req, res) => {
 
         const topics = struct.topics || null;
 
+        // Get obj file
+        const objString = extractObjFromBotModel(metadata.botModel.data);
+        // fs.writeFileSync(String(metadata.botModel.filename), objString, "utf8");
+
         const data = {
             metadata : metadata,
             topics : topics,
+            objString: objString, 
             success: true,
         }
         // Return parsed data

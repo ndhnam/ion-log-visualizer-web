@@ -1,6 +1,6 @@
 import React from "react";
 import "./PlaybackControl.css";
-import { formatTime } from "../utils/formatTime";
+import { formatTime } from "../utils/FormatTime";
 
 export default function PlaybackControl({
   isPlaying,

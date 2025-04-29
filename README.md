@@ -18,6 +18,12 @@ Built with **React** and **modern web technologies**, this project enables inter
 - Session metadata display
 - Robot configuration inspection
 
+## Video Demo
+
+[![Ion Log Viewer Demo](video_demo/video_demo.mp4)](video_demo/video_demo.mp4)
+
+Click the image above to watch a demo of the Ion Log Viewer in action. The video demonstrates above features.
+
 ---
 
 ## Requirements

@@ -6,6 +6,7 @@ import PlaybackControl from "./components/PlaybackControl";
 import { formatTime } from "./utils/FormatTime";
 import Viewport3D from "./components/Viewport3D";
 import { getOdomAtTime } from "./utils/HandleOdom";
+import CameraView from "./components/CameraView";
 
 function App() {
   const [file, setFile] = useState(null);
@@ -160,7 +161,6 @@ function App() {
 
   useEffect(() => {
     if (jsonData && jsonData.objString) {
-      console.log("jsonData.objString", jsonData.objString);
       setObjString(jsonData.objString);
     }
   }, [jsonData]);
@@ -184,6 +184,21 @@ function App() {
     position = [pos.x, pos.z, -pos.y || 0];
     quaternion = [ori.x, ori.z, ori.y, ori.w];
   }
+
+  // Topics contain of image
+  const cameraTopic = topics.find(
+    (t) =>
+      String(t.topicType || t.topic_type).toLowerCase() ===
+      "sensor_msgs/compressedimage"
+  );
+
+  // Image messages
+  const cameraMessages = cameraTopic?.messages || [];
+
+  // Frame closet frame to playbackTime
+  const currentFrame = cameraMessages.find(
+    (m, i) => m.timestamp >= playbackTime || i === cameraMessages.length - 1
+  );
 
   return (
     <div>
@@ -315,6 +330,15 @@ function App() {
               </div>
             )}
           </div>
+          <div style={{ marginTop: 5 }}>
+          {currentFrame ? (
+            <CameraView frame={currentFrame} />
+          ) : (
+            <div style={{ color: "#888", textAlign: "center" }}>
+              No Camera Frame
+            </div>
+          )}
+        </div>
         </div>
 
         <div className="right-panel">
@@ -347,7 +371,7 @@ function App() {
               )}
             </div>
           </div>
-          <div style={{ marginTop: 32 }}>
+          <div style={{ marginTop: 5 }}>
             {objString ? (
               <React.Suspense
                 fallback={
